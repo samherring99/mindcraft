@@ -1,23 +1,40 @@
 import { strictFormat } from '../utils/text.js';
+const { execSync } = import('child_process');
 
 export class Local {
     constructor(model_name, url) {
         this.model_name = model_name;
-        this.url = url || 'http://127.0.0.1:11434';
-        this.chat_endpoint = '/api/chat';
-        this.embedding_endpoint = '/api/embeddings';
+        this.url = url || 'http://localhost:8000';
+        this.chat_endpoint = '/chat';
+        this.embedding_endpoint = '/embed';
     }
 
     async sendRequest(turns, systemMessage) {
-        let model = this.model_name || 'llama3';
+        let model = this.model_name || 'nightwing';
         let messages = strictFormat(turns);
         messages.unshift({role: 'system', content: systemMessage});
         let res = null;
+
         try {
             console.log(`Awaiting local response... (model: ${model})`)
-            res = await this.send(this.chat_endpoint, {model: model, messages: messages, stream: false});
-            if (res)
-                res = res['message']['content'];
+
+            const request = {messages: messages , max_tokens: 20}
+
+            const body = JSON.stringify(request);
+            
+
+            res = await fetch(`${this.url}${this.chat_endpoint}`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                body: body
+            });
+
+            const result = await res.json();
+            
+            if (result)
+                res = result['reply'];
         }
         catch (err) {
             if (err.message.toLowerCase().includes('context length') && turns.length > 1) {
@@ -32,15 +49,27 @@ export class Local {
     }
 
     async embed(text) {
-        let model = this.model_name || 'nomic-embed-text';
-        let body = {model: model, prompt: text};
-        let res = await this.send(this.embedding_endpoint, body);
-        return res['embedding']
+        let body = JSON.stringify({ text: text });
+    
+        const response = await fetch(`${this.url}${this.embedding_endpoint}`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: body
+        });
+
+        if (!response.ok) {
+            throw new Error(`HTTP error! status: ${response.status}`);
+        }
+
+        const res = await response.json();
+        return [res['embedding']];
     }
 
     async send(endpoint, body) {
         const url = new URL(endpoint, this.url);
-        let method = 'POST';
+        let method = 'CURL';
         let headers = new Headers();
         const request = new Request(url, {method, headers, body: JSON.stringify(body)});
         let data = null;

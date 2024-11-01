@@ -1,16 +1,16 @@
 export default 
 {
-    "minecraft_version": "1.20.4", // supports up to 1.21.1
-    "host": "127.0.0.1", // or "localhost", "your.ip.address.here"
+    "minecraft_version": "1.21.1", // supports up to 1.21.1
+    "host": "localhost", // or "localhost", "your.ip.address.here"
     "port": 55916,
-    "auth": "offline", // or "microsoft"
+    "auth": "none", // or "microsoft"
     
     "profiles": [
-        "./andy.json",
+        //"./andy.json",
         // "./profiles/gpt.json",
         // "./profiles/claude.json",
         // "./profiles/gemini.json",
-        // "./profiles/llama.json",
+        "./profiles/nightwing.json",
 
         // using more than 1 profile requires you to /msg each bot indivually
     ],
