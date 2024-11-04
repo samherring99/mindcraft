@@ -11,24 +11,39 @@ export class Local {
 
     async sendRequest(turns, systemMessage) {
         let model = this.model_name || 'nightwing';
-        let messages = strictFormat(turns);
+        let messages = [];
+
+        const latestTurn = turns[turns.length - 1];
+        if (latestTurn) {
+            messages.push({
+                role: latestTurn.role,
+                content: latestTurn.content
+            });
+        }
+        
+        if (systemMessage) {
+            messages.unshift({
+                role: 'system',
+                content: systemMessage
+            });
+        }
         messages.unshift({role: 'system', content: systemMessage});
         let res = null;
 
         try {
             console.log(`Awaiting local response... (model: ${model})`)
 
-            const request = {messages: messages , max_tokens: 20}
-
-            const body = JSON.stringify(request);
+            const request = {
+                messages: messages,
+                max_tokens: 100
+            };
             
-
             res = await fetch(`${this.url}${this.chat_endpoint}`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: body
+                body: JSON.stringify(request)
             });
 
             const result = await res.json();
