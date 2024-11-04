@@ -59,6 +59,8 @@ export class Prompter {
             this.chat_model = new ReplicateAPI(chat.model, chat.url);
         else if (chat.api === 'ollama')
             this.chat_model = new Local(chat.model, chat.url);
+        else if (chat.api === 'nightwing-server')
+            this.chat_model = new Local(chat.model, chat.url);
         else if (chat.api === 'groq') {
             this.chat_model = new GroqCloudAPI(chat.model.replace('groq/', '').replace('groqcloud/', ''), chat.url, max_tokens ? max_tokens : 8192);
         }
@@ -71,6 +73,8 @@ export class Prompter {
         if (embedding === undefined) {
             if (chat.api !== 'ollama')
                 embedding = {api: chat.api};
+            else if (chat.api === 'nighwing-server')
+                embedding = {api: 'none'};
             else
                 embedding = {api: 'none'};
         }
@@ -86,6 +90,8 @@ export class Prompter {
         else if (embedding.api === 'replicate')
             this.embedding_model = new ReplicateAPI(embedding.model, embedding.url);
         else if (embedding.api === 'ollama')
+            this.embedding_model = new Local(embedding.model, embedding.url);
+        else if (embedding.api === 'nighwing-server')
             this.embedding_model = new Local(embedding.model, embedding.url);
         else {
             this.embedding_model = null;
