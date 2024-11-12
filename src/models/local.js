@@ -29,7 +29,8 @@ export class Local {
 
             const request = {
                 messages: messages,
-                max_tokens: 500
+                max_tokens: 500,
+                use_chat_template: true
             };
             
             res = await fetch(`${this.url}${this.chat_endpoint}`, {
