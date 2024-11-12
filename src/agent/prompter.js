@@ -91,7 +91,7 @@ export class Prompter {
             this.embedding_model = new ReplicateAPI(embedding.model, embedding.url);
         else if (embedding.api === 'ollama')
             this.embedding_model = new Local(embedding.model, embedding.url);
-        else if (embedding.api === 'nighwing-server')
+        else if (embedding.api === 'nightwing-server')
             this.embedding_model = new Local(embedding.model, embedding.url);
         else {
             this.embedding_model = null;

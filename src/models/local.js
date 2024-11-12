@@ -4,7 +4,7 @@ const { execSync } = import('child_process');
 export class Local {
     constructor(model_name, url) {
         this.model_name = model_name;
-        this.url = url || 'http://localhost:8000';
+        this.url = 'http://localhost:8000';
         this.chat_endpoint = '/chat';
         this.embedding_endpoint = '/embed';
     }
@@ -21,12 +21,6 @@ export class Local {
             });
         }
         
-        if (systemMessage) {
-            messages.unshift({
-                role: 'system',
-                content: systemMessage
-            });
-        }
         messages.unshift({role: 'system', content: systemMessage});
         let res = null;
 
@@ -35,7 +29,7 @@ export class Local {
 
             const request = {
                 messages: messages,
-                max_tokens: 100
+                max_tokens: 500
             };
             
             res = await fetch(`${this.url}${this.chat_endpoint}`, {
